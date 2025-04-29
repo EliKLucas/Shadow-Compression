@@ -1,0 +1,309 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{caption}
+\captionsetup{font=small}
+
+\title{Relational Shadows: A Comparative Analysis of Structural Resilience Across Complex Systems}
+
+\author{
+    \IEEEauthorblockN{Elijah Lucas}
+    \IEEEauthorblockA{Independent Researcher \\
+    Email: your.email@example.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We introduce a novel method for visualizing and analyzing relational structure collapse under progressive noise, termed \textit{Relational Melting}. By projecting small subgraphs ("snowflakes") from diverse systems (neural networks, random graphs, social networks, knowledge graphs, and protein folding graphs) into 2D "relational shadows," we track how structural resilience manifests differently across domains. Our results reveal clear distinctions in resilience patterns, with protein graphs exhibiting the highest core stability and random graphs collapsing fastest. This methodology provides a new lens for understanding the stability of relational systems across biological, social, and artificial domains.
+\end{abstract}
+
+\section{Methods}
+
+\subsection{System Architecture and Workflow}
+Each system undergoes the following standardized pipeline:
+
+\textbf{Inputs:}
+\begin{itemize}
+    \item Base Graphs: Simulated graphs representing worm brains, random networks, social networks, knowledge graphs, and protein folding structures.
+    \item Snowflake Extraction: 40 snowflakes (6–8 nodes) extracted per system, centered around nodes with degree $\geq 5$.
+\end{itemize}
+
+\textbf{Modifiers:}
+\begin{itemize}
+    \item Progressive noise injection (0\%, 10\%, 20\%, 30\%, 40\%, 50\%) via random edge flipping.
+\end{itemize}
+
+\textbf{Embedding and Projection:}
+\begin{itemize}
+    \item Snowflakes flattened into adjacency feature vectors $x \in \mathbb{R}^{k^2}$ (where k is snowflake size).
+    \item UMAP applied to project from $\mathbb{R}^{k^2}$ into $\mathbb{R}^{2}$.
+    \item Embeddings mean-centered at each noise level to stabilize visualization.
+\end{itemize}
+
+\textbf{Outputs:}
+\begin{itemize}
+    \item 2D relational shadow frames per noise step.
+    \item Drift-speed colored visualizations (blue = stable, red = melting).
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+    \item \textbf{Trustworthiness:} measures preservation of local neighbor relations.
+    \item \textbf{Secondary metrics:} average clustering coefficient and modularity.
+\end{itemize}
+
+\subsection{Snowflake Extraction}
+Nodes with degree $\geq 5$ were selected. 5 neighbors randomly sampled to form snowflakes. Snowflakes were flattened into 1D feature vectors representing connection patterns.
+
+\subsection{Progressive Noise Injection}
+Each edge $(i,j)$ in the adjacency matrix $A$ had a probability $p$ proportional to the noise level to flip:
+\[
+A[i,j] = 1 - A[i,j]
+\]
+This simulated relational degradation.
+
+\subsection{Projection to Relational Shadows}
+Flattened vectors $x \in \mathbb{R}^{k^2}$ (where k is snowflake size) were embedded into $\mathbb{R}^2$ via UMAP, preserving local relational neighborhoods.
+
+\subsection{Systems Tested}
+We analyzed synthetic graphs structured to reflect archetypal systems:
+\begin{itemize}
+    \item \textbf{Worm Brain:} Modular small-world network inspired by \textit{C. elegans} connectome.
+    \item \textbf{Random Graph:} Pure P.~Erd\H{o}s--A.~R\'enyi random network.
+    \item \textbf{Social Graph:} A.-L.~Barab\'asi--R.~Albert scale-free network.
+    \item \textbf{Knowledge Graph:} Synthetic modular semantic network.
+    \item \textbf{Protein Graph:} Folded highly modular structure approximating protein contact maps.
+\end{itemize}
+While synthetic, these graphs emulate real-world archetypes \cite{sporns,newman,barabasi_albert}.
+
+\subsection{Trustworthiness Metric}
+Following \cite{umap} and \cite{tsne}, the trustworthiness $T(k)$ at neighborhood size $k$ is computed as:
+\[
+T(k) = 1 - \frac{2}{n k (2n - 3k -1)} \sum_{i=1}^n \sum_{j \in U_k(i)} (r(i,j) - k)
+\]
+where:
+\begin{itemize}
+    \item $n$ = number of points,
+    \item $U_k(i)$ = points that are neighbors in high-dimensional space but not in low-dimensional space,
+    \item $r(i,j)$ = rank of $j$ in $i$'s ordered neighbor list in the original space.
+\end{itemize}
+Higher trustworthiness indicates better local structure preservation during projection.
+
+\subsection{Interpretation of Relational Shadows}
+While drift-based coloring of snowflakes (blue = stable, red = melting) aids qualitative interpretation, no formal color-counting was performed. Quantitative resilience comparisons were based solely on trustworthiness scores, measuring neighborhood preservation across projections. Visualizations provide complementary structural insights not captured by numeric metrics alone.
+
+\section{Results}
+
+\subsection{Qualitative Observations}
+Distinct relational melting patterns were observed across systems:
+
+\textbf{Worm Brain:} Modular clusters survive moderate noise before gradually dissolving.
+
+\begin{figure*}[htbp]
+\centerline{\includegraphics[width=0.95\textwidth]{assembled_sequences/melting_sequence_worm.png}}
+\caption{Relational melting sequence for Worm Brain simulation: Modular stability under progressive noise.}
+\label{fig:worm_melting}
+\end{figure*}
+
+\textbf{Random Graph:} Rapid chaotic collapse without coherent structures.
+
+\begin{figure*}[htbp]
+\centerline{\includegraphics[width=0.95\textwidth]{assembled_sequences/melting_sequence_random.png}}
+\caption{Relational melting sequence for Random Graph simulation: Rapid structural collapse.}
+\label{fig:random_melting}
+\end{figure*}
+
+\textbf{Social Graph:} Central hubs resist noise initially; periphery collapses quickly.
+
+\begin{figure*}[htbp]
+\centerline{\includegraphics[width=0.95\textwidth]{assembled_sequences/melting_sequence_social.png}}
+\caption{Relational melting sequence for Social Graph simulation: Local hubs resist but periphery collapses.}
+\label{fig:social_melting}
+\end{figure*}
+
+\textbf{Knowledge Graph:} Central clustered cores persist longer under degradation.
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=\textwidth]{assembled_sequences/melting_sequence_knowledge.png}
+\caption{Relational melting sequence for Knowledge Graph simulation: Semi-organized cluster resilience.}
+\label{fig:knowledge_melting}
+\end{figure*}
+
+\textbf{Protein Graph:} Core modular structures exhibit exceptional resilience even at high noise.
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=\textwidth]{assembled_sequences/melting_sequence_protein.png}
+\caption{Relational melting sequence for Protein Graph simulation: Core modular structures persist.}
+\label{fig:protein_melting}
+\end{figure*}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.95\columnwidth]{comparative_figure.png}}
+\caption{Snapshots of relational melting at $\sim$30\% noise. Blue indicates stable snowflakes; red indicates melting (high drift).}
+\label{fig:comparative}
+\end{figure}
+
+\subsection{Quantitative Trustworthiness Scores}
+Trustworthiness degradation across noise levels:
+
+\begin{itemize}
+    \item Worm Brain: 0.92 $\rightarrow$ 0.81
+    \item Random Graph: 0.85 $\rightarrow$ 0.32
+    \item Social Graph: 0.88 $\rightarrow$ 0.40
+    \item Knowledge Graph: 0.90 $\rightarrow$ 0.74
+    \item Protein Graph: 0.95 $\rightarrow$ 0.80
+\end{itemize}
+
+Higher initial trustworthiness scores reflect strong relational neighborhood preservation. Systems with higher modularity showed slower degradation.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.9\columnwidth]{trustworthiness_plot.png}}
+\caption{Trustworthiness degradation curves showing structural resilience differences across systems.}
+\label{fig:trust}
+\end{figure}
+
+\subsection{Secondary Metrics Validation}
+\begin{table}[htbp]
+\caption{Secondary Graph Structural Metrics}
+\begin{center}
+\begin{tabular}{|c|c|c|}ring
+    \includegraphics[wi
+\hline
+\textbf{System} & \textbf{Avg. Clustering} & \textbf{Modularity} \\
+\hline
+Worm Brain & 0.374 & 0.587 \\
+Random Graph & 0.054 & 0.000 \\
+Social Graph & 0.093 & 0.000 \\
+Knowledge Graph & 0.507 & 0.743 \\
+Protein Graph & 0.835 & 0.797 \\
+\hline
+\end{tabular}
+\label{tab:secondary}
+\end{center}
+\end{table}
+
+Higher modularity and clustering were strongly correlated with slower relational melting and greater structural resilience.
+
+\clearpage  % Force all floats before Discussion
+
+\section{Discussion}
+
+\subsection{Relational Resilience Insights}
+Our findings demonstrate that structured modularity critically slows relational collapse under progressive noise.  
+Systems with higher average clustering and modularity values preserved local structure significantly longer.  
+In contrast, random graphs and social networks without strong modularity exhibited rapid degradation.
+
+These patterns suggest that biological structures (such as protein folding networks and neural connectomes) inherently optimize for relational robustness, likely as an evolutionary adaptation against perturbations.
+
+Notably, the synthetic Knowledge Graph demonstrated intermediate resilience, with core modular clusters resisting noise better than random or social graphs, but less effectively than biological structures. This supports the intuition that semantic or informational systems possess some inherent redundancy and modularity, but lack the deep physical embedding that biological networks exhibit.
+
+Relational shadows offer a new lens to distinguish systems based on resilience signatures that traditional metrics might obscure.
+
+\subsection{Trustworthiness and Secondary Metrics}
+The relationship between trustworthiness and secondary metrics reveals an important insight: systems with higher initial modularity and clustering coefficients tend to maintain higher trustworthiness scores under noise. This suggests that the local structural properties captured by these secondary metrics directly influence how well relational neighborhoods are preserved during projection. The strong correlation between these metrics indicates that trustworthiness is not just measuring projection quality, but is also capturing fundamental aspects of a system's structural resilience. This dual role of trustworthiness makes it particularly valuable for analyzing relational melting, as it simultaneously measures both projection fidelity and structural robustness.
+
+\subsection{Limitations}
+While the graphs used in this study emulate documented structural archetypes, they are ultimately synthetic.  
+Real-world datasets (e.g., empirical connectomes, social networks, biological graphs) must be tested in future work to validate generalizability.
+
+Additionally, our graphs are treated as undirected and unweighted; modeling directed, weighted, and multi-relational edges could yield deeper insights.
+
+Finally, while trustworthiness measures local relational preservation, future analyses could incorporate continuity and mean average precision to triangulate projection fidelity.
+
+\section{Conclusion}
+Relational Melting provides a novel framework for visualizing and quantifying the stability of complex relational systems.  
+Our method reveals that modularity and redundancy dramatically influence a system's ability to resist relational degradation.
+
+Relational shadows and drift analyses offer a practical tool for diagnosing structural resilience across biological, social, and technological domains.
+
+Future work will extend this approach to directed graphs, heterogeneous networks, and empirical datasets.
+
+\appendices
+
+\section{Formal System Definitions}
+
+\subsection{Graph Representation}
+Each system is modeled as an undirected, unweighted graph $G = (V, E)$ where:
+\begin{itemize}
+    \item $V$ is the set of nodes (vertices).
+    \item $E \subseteq V \times V$ is the set of undirected edges.
+\end{itemize}
+
+\subsection{Adjacency Matrix}
+An adjacency matrix $A \in \{0,1\}^{n \\times n}$ represents connections:
+\[
+A[i,j] =
+\begin{cases}
+1 & \text{if nodes } i \text{ and } j \text{ are connected} \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+\subsection{Snowflake Extraction}
+Snowflakes are small induced subgraphs (typically 6 nodes) centered around nodes with degree $\geq5$.
+
+\subsection{Flattening Snowflakes}
+Each snowflake's adjacency matrix (size $k \times k$) is flattened into a 1D feature vector $x \in \mathbb{R}^{k^2}$.
+
+\subsection{Noise Injection}
+Perturbations consist of flipping edges:
+\[
+A'[i,j] = 1 - A[i,j]
+\]
+with probability proportional to the desired noise level (e.g., 10\%, 30\%).
+
+\subsection{Projection to Relational Shadows}
+Flattened vectors $x \in \mathbb{R}^{k^2}$ (where k is snowflake size) were embedded into $\mathbb{R}^2$ via UMAP, preserving local relational neighborhoods.
+
+\subsection{Trustworthiness Metric}
+Trustworthiness $T(k)$ quantifies the preservation of local relational neighborhoods across projections, formally defined as:
+
+\[
+T(k) = 1 - \frac{2}{n k (2n - 3k -1)} \sum_{i=1}^n \sum_{j \in U_k(i)} (r(i,j) - k)
+\]
+
+where:
+\begin{itemize}
+    \item $n$ = number of snowflakes,
+    \item $U_k(i)$ = points close in high-dimensional space but not in projection,
+    \item $r(i,j)$ = rank of $j$ in distance ordering from $i$.
+\end{itemize}
+
+Higher $T(k)$ indicates better relational preservation.
+
+\section*{Acknowledgment}
+The author thanks the broader open-source community whose tools made these analyses possible.
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{99}
+
+\bibitem{umap}
+L. McInnes, J. Healy, and J. Melville, ``UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction,'' \textit{arXiv preprint arXiv:1802.03426}, 2018.
+
+\bibitem{tsne}
+L. van der Maaten and G. Hinton, ``Visualizing Data using t-SNE,'' \textit{Journal of Machine Learning Research}, vol. 9, no. Nov, pp. 2579--2605, 2008.
+
+\bibitem{sporns}
+O. Sporns, \textit{Networks of the Brain}, MIT Press, 2011.
+
+\bibitem{newman}
+M. Newman, \textit{Networks: An Introduction}, Oxford University Press, 2010.
+
+\bibitem{watts_strogatz}
+D. J. Watts and S. H. Strogatz, ``Collective dynamics of 'small-world' networks,'' \textit{Nature}, vol. 393, pp. 440--442, 1998.
+
+\bibitem{erdos_renyi}
+P.~Erd\H{o}s and A.~R\'enyi, ``On the evolution of random graphs,'' \textit{Publications of the Mathematical Institute of the Hungarian Academy of Sciences}, vol. 5, pp. 17--61, 1960.
+
+\bibitem{barabasi_albert}
+A.-L.~Barab\'asi and R.~Albert, ``Emergence of scaling in random networks,'' \textit{Science}, vol. 286, no. 5439, pp. 509--512, 1999.
+
+\end{thebibliography}
+
+\end{document} 
