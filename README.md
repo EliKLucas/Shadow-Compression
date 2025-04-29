@@ -22,8 +22,8 @@ For each network type, the code:
 
 1. Clone this repository:
 ```bash
-git clone [repository-url]
-cd Projection_Compression
+git clone https://github.com/EliKLucas/Shadow-Compression.git
+cd Shadow-Compression
 ```
 
 2. Install dependencies:
@@ -71,10 +71,6 @@ If you use this code in your research, please cite:
   year={2023}
 }
 ```
-
-## License
-
-[Add your license here]
 
 ## Contact
 
