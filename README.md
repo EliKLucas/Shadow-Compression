@@ -65,10 +65,8 @@ This will:
 If you use this code in your research, please cite:
 
 ```
-@article{lucas2023relational,
-  title={Relational Shadows: A Comparative Analysis of Structural Resilience Across Complex Systems},
-  author={Lucas, Elijah},
-  year={2023}
+@article{Elijah Lucas (2025). Shadow Compression: Visualizing Topological Distortions During
+Dimensional Reduction. Zenodo. DOI: 10.5281/zenodo.15300463
 }
 ```
 
